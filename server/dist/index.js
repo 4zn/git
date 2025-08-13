@@ -2,11 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import http from 'http';
 import { Server } from 'socket.io';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { characters } from './data/characters.js';
 import { storyEpisodes } from './data/story.js';
 import { addPlayerToRoom, getOrCreateRoom, getRoom, listRooms, removePlayerFromRoom, resetVotes, setPlayerCharacter, startStory, voteChoice } from './game/state.js';
 const app = express();
-app.use(cors({ origin: ['http://localhost:5173'], credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 app.get('/api/characters', (_req, res) => {
@@ -34,10 +36,22 @@ app.get('/api/rooms', (_req, res) => {
     }));
     res.json({ rooms });
 });
+// Serve built client for same-origin hosting
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const clientDist = path.resolve(__dirname, '../../client/dist');
+app.use(express.static(clientDist));
+app.get('*', (req, res) => {
+    // Only fall back for non-API, non-socket paths
+    if (req.path.startsWith('/api') || req.path.startsWith('/socket.io')) {
+        return res.status(404).end();
+    }
+    res.sendFile(path.join(clientDist, 'index.html'));
+});
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: ['http://localhost:5173'],
+        origin: true,
         credentials: true
     }
 });
