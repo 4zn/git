@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+	<item>
+		<shape android:shape="rectangle">
+			<gradient android:startColor="#1e2a8a" android:endColor="#0f153f" android:angle="270" />
+		</shape>
+	</item>
+	<item>
+		<bitmap
+			android:src="@mipmap/ic_launcher"
+			android:gravity="center" />
+	</item>
+</layer-list>
