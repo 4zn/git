@@ -4,7 +4,7 @@ let socket: Socket | null = null;
 
 export function getSocket(): Socket {
   if (!socket) {
-    socket = io('http://localhost:4000', { transports: ['websocket'] });
+    socket = io('http://localhost:4000');
   }
   return socket;
 }
